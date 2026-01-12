@@ -44,5 +44,3 @@ JOIN Department_Fees F ON P.DeptName = F.DeptName;
 DROP TABLE Student_Participation;
 
 DROP TABLE Department_Fees;
-
-ROLLBACK;
