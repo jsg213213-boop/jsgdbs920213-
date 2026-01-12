@@ -92,6 +92,7 @@ SELECT NAME AS "이름",
               PAY * 0.20) AS "세금"
 FROM EMP;
 
+
 SELECT E.NAME AS "이름", 
        D.DNAME AS "부서명", 
        E.POSITION AS "직급"
