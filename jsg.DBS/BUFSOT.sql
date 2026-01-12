@@ -14,24 +14,35 @@ CREATE TABLE Student_Participation (
 );
 
 -- 학과 비용 데이터 삽입
-INSERT INTO Department_Fees VALUES ('경제학과', 4500);
-INSERT INTO Department_Fees VALUES ('데이터경영학과', 2500);
-INSERT INTO Department_Fees VALUES ('국제비서학과', 1500);
-INSERT INTO Department_Fees VALUES ('무역학과', 3500);
+INSERT INTO Department_Fees VALUES ('경제학과', 45000);
+INSERT INTO Department_Fees VALUES ('데이터경영학과', 25000);
+INSERT INTO Department_Fees VALUES ('국제비서학과', 15000);
+INSERT INTO Department_Fees VALUES ('무역학과', 35000);
 
 -- 학생 데이터 삽입 (예시)
 INSERT INTO Student_Participation VALUES ('08학번', '경제학과', 'O');
 INSERT INTO Student_Participation VALUES ('13학번', '데이터경영학과', 'O');
 INSERT INTO Student_Participation VALUES ('10학번', '국제비서학과', 'X');
 INSERT INTO Student_Participation VALUES ('11학번', '경제학과', 'X');
+INSERT INTO Student_Participation VALUES ('12학번', '무역학과', 'O');
+INSERT INTO Student_Participation VALUES ('09학번', '국제비서학과', 'O');
+INSERT INTO Student_Participation VALUES ('17학번', '데이터경영학과', 'O');
+INSERT INTO Student_Participation VALUES ('26학번', '무역학과', 'O');
+INSERT INTO Student_Participation VALUES ('11학번', '데이터경영학과', 'O');
 
 SELECT 
-    P.StudentID AS 학번,
-    P.DeptName AS 학과,
-    P.IsParticipating AS 참여여부,
+    P.StudentID AS STUDENT_ID, 
+    P.DeptName AS ASDEPARTMENT,
+    P.IsParticipating AS PARTICIPATION_STATUS ,
     CASE 
         WHEN P.IsParticipating = 'O' THEN F.Fee 
         ELSE NULL 
-    END AS 참가비
+    END AS FEE
 FROM Student_Participation P
 JOIN Department_Fees F ON P.DeptName = F.DeptName;
+
+DROP TABLE Student_Participation;
+
+DROP TABLE Department_Fees;
+
+ROLLBACK;
