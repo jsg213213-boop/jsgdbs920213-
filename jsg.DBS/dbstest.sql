@@ -1,0 +1,141 @@
+CREATE TABLE dept (
+    deptno VARCHAR2(6) PRIMARY KEY,
+    dname  VARCHAR2(10) NOT NULL UNIQUE,
+    area   VARCHAR2(10)
+);
+CREATE TABLE emp (
+    empno    NUMBER PRIMARY KEY,
+    name     VARCHAR2(10) NOT NULL UNIQUE,
+    deptno   VARCHAR2(6) REFERENCES dept(deptno),
+    position VARCHAR2(10) CHECK (position IN ('사원', '대리', '과장', '부장')),
+    pay      NUMBER NOT NULL,
+    pempno   NUMBER
+);
+SELECT * FROM DEPT;
+SELECT * FROM EMP;
+
+INSERT INTO dept (deptno, dname) VALUES ('101', '영업부');
+INSERT INTO dept (deptno, dname) VALUES ('102', '총무부');
+INSERT INTO dept (deptno, dname) VALUES ('103', '기획부');
+INSERT INTO dept (deptno, dname) VALUES ('104', '홍보부');
+
+INSERT INTO emp VALUES (1001, '홍길동', '101', '부장', 450, NULL);
+INSERT INTO emp VALUES (1002, '김연아', '102', '부장', 400, NULL);
+INSERT INTO emp VALUES (1003, '박지성', '101', '과장', 350, 1001);
+INSERT INTO emp VALUES (1004, '김태근', '103', '과장', 410, NULL);
+INSERT INTO emp VALUES (1005, '서찬수', '101', '대리', 300, 1003);
+INSERT INTO emp VALUES (1006, '김수현', '103', '대리', 400, 1004);
+INSERT INTO emp VALUES (1007, '정동민', '102', '대리', 320, 1002);
+INSERT INTO emp VALUES (1008, '이성규', '102', '사원', 380, 1007);
+INSERT INTO emp VALUES (1009, '임진영', '103', '사원', 250, 1006);
+INSERT INTO emp VALUES (1010, '서진수', '101', '사원', 200, 1005);
+
+INSERT INTO emp VALUES (1011, '이순신', '104', '부장', 500, NULL);
+
+UPDATE DEPT SET AREA = 'SEOUL'
+ WHERE DEPTNO = 101; 
+
+UPDATE DEPT SET DNAME ='영엄부'
+ WHERE DEPTNO = 101;
+
+UPDATE DEPT SET AREA = 'BUSAN'
+ WHERE DEPTNO = 102; 
+
+UPDATE DEPT SET DNAME ='총무부'
+ WHERE DEPTNO = 102;
+
+UPDATE DEPT SET AREA = 'BUSAN'
+ WHERE DEPTNO = 103; 
+
+UPDATE DEPT SET DNAME ='기획부'
+ WHERE DEPTNO = 103;
+
+ UPDATE DEPT SET AREA = 'BUSAN'
+ WHERE DEPTNO = 104; 
+
+UPDATE DEPT SET DNAME ='홍보부'
+ WHERE DEPTNO = 104;
+
+SELECT * FROM DEPT;
+
+DELETE FROM EMP
+  WHERE NAME = '이순신';
+SELECT * FROM EMP;
+
+SELECT * FROM EMP 
+WHERE DEPTNO = 101;
+
+SELECT E.NAME, D.DNAME, E.POSITION
+FROM EMP E
+JOIN DEPT D ON E.DEPTNO = D.DEPTNO
+WHERE D.DNAME IN ('영업부', '총무부')
+ORDER BY E.NAME ASC;
+
+SELECT NAME AS "이름", 
+       PAY AS "급여",
+       CASE 
+            WHEN PAY <= 200 THEN PAY * 0.05
+            WHEN PAY <= 300 THEN PAY * 0.10
+            WHEN PAY <= 400 THEN PAY * 0.15
+            ELSE PAY * 0.20
+       END AS "세금"
+FROM EMP;
+
+
+SELECT NAME AS "이름", 
+       PAY AS "급여",
+       DECODE(TRUNC(PAY/100.1), 
+              0, PAY * 0.05,
+              1, PAY * 0.05,
+              2, PAY * 0.10,
+              3, PAY * 0.15,
+              PAY * 0.20) AS "세금"
+FROM EMP;
+
+
+
+SELECT E.NAME AS "이름", 
+       D.DNAME AS "부서명", 
+       E.POSITION AS "직급"
+FROM EMP E
+JOIN DEPT D ON E.DEPTNO = D.DEPTNO
+WHERE D.DNAME IN ('영업부', '총무부')
+ORDER BY E.NAME;
+
+SELECT E1.NAME AS "사원명", 
+       E2.NAME AS "직속상관명"
+FROM EMP E1
+LEFT OUTER JOIN EMP E2 ON E1.PEMPNO = E2.EMPNO;
+
+SELECT D.DNAME AS "부서명", 
+       AVG(E.PAY) AS "급여의 평균"
+FROM EMP E
+JOIN DEPT D ON E.DEPTNO = D.DEPTNO
+GROUP BY D.DNAME
+HAVING AVG(E.PAY) >= 350;
+
+SELECT E.NAME, D.DNAME, E.PAY
+FROM EMP E
+JOIN DEPT D ON E.DEPTNO = D.DEPTNO
+WHERE (E.DEPTNO, E.PAY) IN (
+    SELECT DEPTNO, MAX(PAY)
+    FROM EMP
+    GROUP BY DEPTNO
+);
+
+SELECT E.NAME, D.DNAME
+FROM EMP E
+JOIN DEPT D ON E.DEPTNO = D.DEPTNO
+WHERE E.DEPTNO = (
+    SELECT DEPTNO
+    FROM EMP
+    WHERE NAME = '이성규'
+);
+
+SELECT NAME, POSITION, PAY
+FROM EMP
+WHERE PAY > (
+    SELECT MIN(PAY)
+    FROM EMP
+    WHERE POSITION = '과장'
+);
